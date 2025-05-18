@@ -1,5 +1,6 @@
 package restassured;
 
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -8,6 +9,7 @@ import io.restassured.response.Response;
 
 public class TestEmployeeImpl {
     String token;
+    String newIdAdded;
 
     // @BeforeClass
     // public void setup() {
@@ -35,7 +37,6 @@ public class TestEmployeeImpl {
     // }
 
     @BeforeSuite
-    @Test
     public void testlogin(){
         RestAssured.baseURI = "https://whitesmokehouse.com";
         // Create login request
@@ -58,21 +59,21 @@ public class TestEmployeeImpl {
         System.out.println("Token: " + token);
     }
 
-    // @Test
-    // public void testListAllObject(){
+    @Test
+    public void testListAllObject(){
        
-    //     Response response = RestAssured.given()
-    //             .header("Content-Type", "application/json")
-    //             .header("Authorization", "Bearer " + token)
-    //             .log().all()
-    //             .when()
-    //             .get("/webhook/api/objects");
-    //     // Print the response
-    //     System.out.println("Response List Object: " + response.asPrettyString());
-    //     assert response.jsonPath().getString("[0]")!=null: "List All Object Empty";
-    // }
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .log().all()
+                .when()
+                .get("/webhook/api/objects");
+        // Print the response
+        System.out.println("Response List Object: " + response.asPrettyString());
+        assert response.jsonPath().getString("[0]")!=null: "List All Object Empty";
+    }
 
-     @Test
+    @Test
     public void testListOfObjectsByIds(){       
         Response response = RestAssured.given()
                 .header("Content-Type", "application/json")
@@ -87,5 +88,126 @@ public class TestEmployeeImpl {
         assert response.jsonPath().getString("[0].id").equals("56"): "Object Id Not Match";
         assert response.jsonPath().getString("[0].name").equalsIgnoreCase("test delete"): "Name Not Match";
         assert response.jsonPath().getString("[0].data.year").equals("2022"): "Year Not Match";
+    }
+
+    @Test(dependsOnMethods = {"testAddObject"})
+    public void testSingleObject(){       
+        System.out.println("New Id Added: " + newIdAdded);
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .log().all()
+                .when()
+                .get("/webhook/8749129e-f5f7-4ae6-9b03-93be7252443c/api/objects/"+newIdAdded);
+
+        // Print the response
+        System.out.println("Response Single Object: " + response.asPrettyString());
+        assert response.jsonPath().getString("name").equalsIgnoreCase("Asus Notebook Yuana"): "Name Different from Expected";
+    }
+
+    @Test
+    public void testAddObject(){
+        String requestBody = "{\n" + 
+                "  \"name\": \"Asus Notebook Yuana\",\n" +
+                "  \"data\": {\n" + 
+                "    \"year\": \"2025\",\n" + 
+                "    \"price\": 1000,\n" + 
+                "    \"cpu_model\": \"Intel I3\",\n" + 
+                "    \"hard_disk_size\": \"500 GB\",\n" + 
+                "    \"capacity\": \"2 cpu\",\n" + 
+                "    \"screen_size\": \"15 Inchi\",\n" + 
+                "    \"color\": \"red\"\n" +
+                "  }"+
+                "}";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .body(requestBody)
+                .log().all()
+                .when()
+                .post("/webhook/api/objects");
+
+        // Print the response
+        System.out.println("Response Add Object: " + response.asPrettyString());
+        newIdAdded = response.jsonPath().getString("[0].id");
+        assert response.jsonPath().getString("[0].id") != null: "Add Object Failed";
+    }
+
+    @Test(dependsOnMethods = {"testAddObject"})
+    public void testUpdateObject(){
+        System.out.println("New Id Added2: " + newIdAdded);
+        String requestBody = "{\n" + 
+                "  \"name\": \"HP Notebook Yuana\",\n" +
+                "  \"data\": {\n" +                 
+                "    \"year\": \"2025\",\n" + 
+                "    \"price\": 4000,\n" + 
+                "    \"cpu_model\": \"Intel I7\",\n" + 
+                "    \"hard_disk_size\": \"500 GB\",\n" + 
+                "    \"capacity\": \"2 cpu\",\n" + 
+                "    \"screen_size\": \"15 Inchi\",\n" + 
+                "    \"color\": \"hitam\"\n" +
+                "  }"+
+                "}";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .body(requestBody)
+                .log().all()
+                .when()
+                .put("/webhook/37777abe-a5ef-4570-a383-c99b5f5f7906/api/objects/"+newIdAdded);
+
+        // Print the response
+        System.out.println("Response Update Object: " + response.asPrettyString());
+    }
+
+    @Test(dependsOnMethods = {"testUpdateObject"})
+    public void testPartiallyUpdateObject(){
+        System.out.println("New Id Added3: " + newIdAdded);
+        String requestBody = "{\n" + 
+                "  \"name\": \"ACER Notebook Yuana\",\n" +
+                "   \"year\": \"2024\"\n" +
+                "}"; 
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .body(requestBody)
+                .log().all()
+                .when()
+                .patch("/webhook/39a0f904-b0f2-4428-80a3-391cea5d7d04/api/object/"+newIdAdded);
+
+        // Print the response
+        System.out.println("Response Partially Update Object: " + response.asPrettyString());
+    }
+
+    @Test(dependsOnMethods = {"testPartiallyUpdateObject"})
+    public void testDeleteObject(){
+        System.out.println("New Id Added4: " + newIdAdded);
+    
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .log().all()
+                .when()
+                .put("/webhook/37777abe-a5ef-4570-a383-c99b5f5f7906/api/objects/"+newIdAdded);
+
+        // Print the response
+        System.out.println("Response Delete Object: " + response.asPrettyString());
+    }
+
+    @Test
+    @AfterClass
+    public void testGetAllDepartment(){    
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .log().all()
+                .when()
+                .get("/webhook/api/department");
+
+        // Print the response
+        System.out.println("Response All Dept: " + response.asPrettyString());
     }
 }

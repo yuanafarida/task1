@@ -27,5 +27,14 @@ task for learning testng and rest-assured
 3. Tambahkan ke pom.xml di dalam tag <dependencies></dependencies>
 4. kemudian build dengan command mvn clean install di terminal
 
+#Menjalankan Test
+1. Buka file TestEmployeeImpl.java
+2. Pada public class TestEmployeeImpl, klik icon Run
+
+atau
+1. Buka Testing Explorer
+2. Klik Run Test pada TestEmployeeImpl
+3. Hasil pengujian akan ditampilkan di Test Results atau Debug Conosle
+
 
 
