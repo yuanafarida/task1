@@ -53,8 +53,39 @@ public class TestEmployeeImpl {
     
         // System.out.println("Response: " + response.asPrettyString()); 
         assert response.statusCode() == 200 : "Login failed with status code: " + response.statusCode();
+        assert response.jsonPath().getString("token") != null: "Login failed with message: " + response.jsonPath().getString("message");
         token = response.jsonPath().getString("token");  
         System.out.println("Token: " + token);
     }
 
+    // @Test
+    // public void testListAllObject(){
+       
+    //     Response response = RestAssured.given()
+    //             .header("Content-Type", "application/json")
+    //             .header("Authorization", "Bearer " + token)
+    //             .log().all()
+    //             .when()
+    //             .get("/webhook/api/objects");
+    //     // Print the response
+    //     System.out.println("Response List Object: " + response.asPrettyString());
+    //     assert response.jsonPath().getString("[0]")!=null: "List All Object Empty";
+    // }
+
+     @Test
+    public void testListOfObjectsByIds(){       
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .queryParam("id",56)
+                .log().all()
+                .when()
+                .get("/webhook/api/objects");
+
+        // Print the response
+        System.out.println("Response List of Object Id: " + response.asPrettyString());
+        assert response.jsonPath().getString("[0].id").equals("56"): "Object Id Not Match";
+        assert response.jsonPath().getString("[0].name").equalsIgnoreCase("test delete"): "Name Not Match";
+        assert response.jsonPath().getString("[0].data.year").equals("2022"): "Year Not Match";
+    }
 }
