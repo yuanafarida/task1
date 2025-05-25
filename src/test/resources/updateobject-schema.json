@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LaptopProduct",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "string",
+          "pattern": "^[0-9]{4}$"
+        },
+        "price": {
+          "type": "string",
+          "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+        },
+        "cpu_model": {
+          "type": "string"
+        },
+        "hard_disk_size": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string",
+          "enum": ["black", "white", "silver", "red", "green", "blue"]
+        },
+        "capacity": {
+          "type": "string"
+        },
+        "screen_size": {
+          "type": "string",
+          "pattern": "^[0-9]{1,2}(\\.\\d{1,2})? Inch$"
+        }
+      },
+      "required": [
+        "year",
+        "price",
+        "cpu_model",
+        "hard_disk_size",
+        "color",
+        "capacity",
+        "screen_size"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": ["id", "name", "data"],
+  "additionalProperties": false
+}
