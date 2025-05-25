@@ -191,7 +191,7 @@ public class TestEmployeeImpl {
                 .header("Authorization", "Bearer " + token)
                 .log().all()
                 .when()
-                .put("/webhook/37777abe-a5ef-4570-a383-c99b5f5f7906/api/objects/"+newIdAdded);
+                .delete("/webhook/d79a30ed-1066-48b6-83f5-556120afc46f/api/objects/{id}", newIdAdded);
 
         // Print the response
         System.out.println("Response Delete Object: " + response.asPrettyString());
