@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.task.request.AddObjectRequest;
 import com.task.request.ObjectData;
+import com.task.request.UpdateObjectRequest;
 import com.task.response.AddObjectResponse;
 
 import cucumber.context.EmployeeContext;
@@ -108,5 +109,95 @@ public class UpdateDefinition extends EmployeeEndpoint{
         @SuppressWarnings("unchecked")
         List<AddObjectResponse> addObjectResponseList = context.get("addObj", List.class);
         assert addObjectResponseList.get(0).getData().getColor().equals(color): "Color in the response add object not match with expected "+color+", but got " + addObjectResponseList.get(0).getData().getColor();
+    }
+
+    @And("Save the id from the response to local storage")
+    public void saveIdObject() {
+        @SuppressWarnings("unchecked")
+        List<AddObjectResponse> addObjectResponseList = context.get("addObj", List.class);
+        context.set("idObject", addObjectResponseList.get(0).getId());
+        System.out.println("ID Object: " + addObjectResponseList.get(0).getId());
+    }
+
+    @Given("Make sure id in local storage not empty 1")
+    public void prepareUpdateObject() { 
+        assert context.get("idObject", Integer.class) != null : "ID Object in context is null"; 
+    }
+
+    @When("Send a request to update object")
+    public void doUpdateObject() { 
+        UpdateObjectRequest updateObjectRequest = new UpdateObjectRequest();
+        updateObjectRequest.setName("Macbook Pro Yuana Updated");
+        updateObjectRequest.setYear("2020");
+        Gson gson = new Gson();
+        String body = gson.toJson(updateObjectRequest);
+        response = partiallyUpdateObject(context.get("token", String.class), context.get("idObject", Integer.class), body);
+        context.setResponse(response);
+    }
+
+    @Then("The response status update object must be {int}")
+    public void verifyResponseStatusUpdateObject(int statusCode) {
+        assert context.getResponse().statusCode() == statusCode : "Expected status code 200 but got " + context.getResponse().statusCode();
+    }
+
+    @And("The response schema update object should be match with schema {string}")
+    public void verifyResponseBodyUpdateObjectSchema(String schemaPath) {
+        context.getResponse().then().assertThat().body(JsonSchemaValidator.matchesJsonSchemaInClasspath(schemaPath));
+    }
+
+    @And("Name in the response update object changed to {string}")
+    public void verifyResponseBodyUpdateObjectReturnsName(String name) {
+        AddObjectResponse addObjectResponse = new Gson().fromJson(context.getResponse().asString(), AddObjectResponse.class);
+        assert addObjectResponse.getName().equals(name) : "Name in the response update object not match with expected "+name+", but got " + addObjectResponse.getName();
+    }
+
+    @And("Year in the response update object changed to {string}")
+    public void verifyResponseBodyUpdateObjectReturnsYear(String year) {
+        AddObjectResponse addObjectResponse = new Gson().fromJson(context.getResponse().asString(), AddObjectResponse.class);
+        assert String.valueOf(addObjectResponse.getData().getYear()).equals(year) : "Year in the response update object not match with expected "+year+", but got " + addObjectResponse.getData().getYear();        
+    }
+
+    @Given("Make sure id in local storage not empty 2")
+    public void prepareSingleObjectAfterUpdate() { 
+        assert context.get("idObject", Integer.class) != null : "ID Object in context is null"; 
+    }
+
+    @When("Send a request to get single object after update")
+    public void doSingleObjectAfterUpdate() { 
+        response = getSingleObject(context.get("token", String.class), context.get("idObject", Integer.class));
+        context.setResponse(response);
+    }
+
+    @Then("The response status get single object must be {int}")
+    public void verifyResponseStatusSingleObjectAfterUpdate(int statusCode) {
+        assert context.getResponse().statusCode() == statusCode : "Expected status code 200 but got " + context.getResponse().statusCode();
+    }
+
+    @And("Name in the response get single object must be {string}")
+    public void verifyResponseBodySingleObjectAfterUpdateReturnsName(String name) {
+        AddObjectResponse addObjectResponse = new Gson().fromJson(context.getResponse().asString(), AddObjectResponse.class);
+        assert addObjectResponse.getName().equals(name) : "Name in the response get single object after update not match with expected "+name+", but got " + addObjectResponse.getName();
+    }
+
+    @And("Year in the response get single object must be {string}")
+    public void verifyResponseBodySingleObjectAfterUpdateReturnsYear(String year) {
+        AddObjectResponse addObjectResponse = new Gson().fromJson(context.getResponse().asString(), AddObjectResponse.class);
+        assert String.valueOf(addObjectResponse.getData().getYear()).equals(year) : "Year in the response get single object after update not match with expected "+year+", but got " + addObjectResponse.getData().getYear();
+    }
+
+    @Given("Make sure id in local storage not empty 3")
+    public void prepareDeleteObject() { 
+        assert context.get("idObject", Integer.class) != null : "ID Object in context is null"; 
+    }
+
+    @When("Send a request to delete object")
+    public void doDeleteObject() { 
+        response = deleteObject(context.get("token", String.class), context.get("idObject", Integer.class));
+        context.setResponse(response);
+    }
+
+    @Then("The response status delete object must be {int}")
+    public void verifyResponseStatusDeleteObject(int statusCode) {
+        assert context.getResponse().statusCode() == statusCode : "Expected status code 200 but got " + context.getResponse().statusCode();
     }
 }

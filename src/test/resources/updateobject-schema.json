@@ -27,15 +27,13 @@
           "type": "string"
         },
         "color": {
-          "type": "string",
-          "enum": ["black", "white", "silver", "red", "green", "blue"]
+          "type": "string"
         },
         "capacity": {
           "type": "string"
         },
         "screen_size": {
-          "type": "string",
-          "pattern": "^[0-9]{1,2}(\\.\\d{1,2})? Inch$"
+          "type": "string"
         }
       },
       "required": [
