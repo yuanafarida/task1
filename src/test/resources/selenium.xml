@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Selenium" verbose="1">
+  <test name="SeleniumRegression">
+    <classes>
+      <class name="selenium.pom.CheckoutPOMScenario"/>
+    </classes>
+  </test>
+</suite>

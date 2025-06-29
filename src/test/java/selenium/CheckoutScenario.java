@@ -113,30 +113,30 @@ public class CheckoutScenario {
         Thread.sleep(2000);
     }
 
-    // @Test(dependsOnMethods = "addToCart", dataProvider= "invalidCheckoutData")
-    // public void invalidCheckout(String firstName, String lastName, String postalCode, String errorMessage) throws InterruptedException {
+    @Test(dependsOnMethods = "addToCart", dataProvider= "invalidCheckoutData")
+    public void invalidCheckout(String firstName, String lastName, String postalCode, String errorMessage) throws InterruptedException {
 
-    //     System.out.println("Invalid Checkout test is running:"+ " " + firstName + ", " + lastName + ", " + postalCode);
+        System.out.println("Invalid Checkout test is running:"+ " " + firstName + ", " + lastName + ", " + postalCode);
 
-    //     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-    //     wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name")));
-    //     // Fill in checkout information
-    //     driver.findElement(By.id("first-name")).clear();
-    //     driver.findElement(By.id("first-name")).sendKeys(firstName);
-    //     driver.findElement(By.id("last-name")).clear();
-    //     driver.findElement(By.id("last-name")).sendKeys(lastName);
-    //     driver.findElement(By.id("postal-code")).clear();   
-    //     driver.findElement(By.id("postal-code")).sendKeys(postalCode);
-    //     driver.findElement(By.id("continue")).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("first-name")));
+        // Fill in checkout information
+        driver.findElement(By.id("first-name")).clear();
+        driver.findElement(By.id("first-name")).sendKeys(firstName);
+        driver.findElement(By.id("last-name")).clear();
+        driver.findElement(By.id("last-name")).sendKeys(lastName);
+        driver.findElement(By.id("postal-code")).clear();   
+        driver.findElement(By.id("postal-code")).sendKeys(postalCode);
+        driver.findElement(By.id("continue")).click();
 
-    //     //wait until the error message is visible
-    //     System.out.println("Expected error message: " + errorMessage);
-    //     wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[@data-test='error']")));
-    //     String checkErrorMessage = driver.findElement(By.xpath("//h3[@data-test='error']")).getText();
-    //     Assert.assertEquals(checkErrorMessage, errorMessage, "Error Message does not match!");   
+        //wait until the error message is visible
+        System.out.println("Expected error message: " + errorMessage);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[@data-test='error']")));
+        String checkErrorMessage = driver.findElement(By.xpath("//h3[@data-test='error']")).getText();
+        Assert.assertEquals(checkErrorMessage, errorMessage, "Error Message does not match!");   
 
-    //     Thread.sleep(2000);
-    // }
+        Thread.sleep(2000);
+    }
     
     @Test(dependsOnMethods = "addToCart")
      public void validCheckout() throws InterruptedException {

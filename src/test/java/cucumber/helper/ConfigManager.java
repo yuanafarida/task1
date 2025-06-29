@@ -16,4 +16,8 @@ public class ConfigManager {
     public static String getPassword(){
         return dotenv.get("PASSWORD");
     }
+
+     public static String getBaseSeleniumUrl(){
+        return dotenv.get("BASE_SELENIUM_URL");
+    }
 }
